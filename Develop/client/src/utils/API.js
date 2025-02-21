@@ -1,36 +1,5 @@
 import { gql } from '@apollo/client';
 
-export const SEARCH_GOOGLE_BOOKS = gql`
-  query searchGoogleBooks($query: String!) {
-    searchGoogleBooks(query: $query) {
-      bookId
-      authors
-      title
-      description
-      image
-      link
-    }
-  }
-`;
-
-export const SAVE_BOOK = gql`
-  mutation saveBook($input: BookInput!) {
-    saveBook(input: $input) {
-      _id
-      username
-      email
-      savedBooks {
-        bookId
-        authors
-        title
-        description
-        image
-        link
-      }
-    }
-  }
-`;
-
 export const LOGIN_USER = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -73,6 +42,24 @@ export const ADD_USER = gql`
   }
 `;
 
+export const SAVE_BOOK = gql`
+  mutation saveBook($input: BookInput!) {
+    saveBook(input: $input) {
+      _id
+      username
+      email
+      savedBooks {
+        bookId
+        authors
+        title
+        description
+        image
+        link
+      }
+    }
+  }
+`;
+
 export const REMOVE_BOOK = gql`
   mutation removeBook($bookId: String!) {
     removeBook(bookId: $bookId) {
@@ -87,6 +74,37 @@ export const REMOVE_BOOK = gql`
         image
         link
       }
+    }
+  }
+`;
+
+export const GET_ME = gql`
+  query me {
+    me {
+      _id
+      username
+      email
+      savedBooks {
+        bookId
+        authors
+        title
+        description
+        image
+        link
+      }
+    }
+  }
+`;
+
+export const SEARCH_GOOGLE_BOOKS = gql`
+  query searchGoogleBooks($query: String!) {
+    searchGoogleBooks(query: $query) {
+      bookId
+      authors
+      title
+      description
+      image
+      link
     }
   }
 `;

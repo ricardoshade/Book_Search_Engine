@@ -10,24 +10,29 @@ const SearchBooks = () => {
   const [searchInput, setSearchInput] = useState('');
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
   const [saveBook] = useMutation(SAVE_BOOK);
-  const [searchGoogleBooks, { data }] = useLazyQuery(SEARCH_GOOGLE_BOOKS);
+  const [searchGoogleBooks, { error, data }] = useLazyQuery(SEARCH_GOOGLE_BOOKS);
 
   useEffect(() => {
     if (data) {
-      const bookData = data.searchGoogleBooks.items.map((book) => ({
-        bookId: book.id,
-        authors: book.volumeInfo.authors || ['No author to display'],
-        title: book.volumeInfo.title,
-        description: book.volumeInfo.description,
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
+      const bookData = data.searchGoogleBooks.map((book) => ({
+        bookId: book.bookId,
+        authors: book.authors || ['No author to display'],
+        title: book.title,
+        description: book.description,
+        image: book.image,
+        link: book.link,
       }));
       setSearchedBooks(bookData);
     }
-  }, [data]);
+
+    if (error) {
+      console.error("Error fetching books:", error);
+    }
+  }, [data, error]);
 
   useEffect(() => {
     return () => saveBookIds(savedBookIds);
-  });
+  }, [savedBookIds]);
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -37,10 +42,10 @@ const SearchBooks = () => {
     }
 
     try {
-      searchGoogleBooks({ variables: { query: searchInput } });
+      await searchGoogleBooks({ variables: { query: searchInput } });
       setSearchInput('');
     } catch (err) {
-      console.error(err);
+      console.error("Error performing search:", err);
     }
   };
 
@@ -59,7 +64,7 @@ const SearchBooks = () => {
 
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
-      console.error(err);
+      console.error("Error saving book:", err);
     }
   };
 
